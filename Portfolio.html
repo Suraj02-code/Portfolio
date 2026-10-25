@@ -1,0 +1,1219 @@
+Here is your complete, updated code.
+
+I updated Saturn's details panel to feature **Blossom and Beyond Florals**, using your exact copy, structured telemetry logs (`01 // LIVE PRODUCTION TELEMETRY`, `02 // FLORAL COMMERCE`, `03 // SYSTEM STATUS`), and the **PERN Architecture Stack** (PostgreSQL, Express.js, React.js, Node.js).
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suraj Galaxy - Interactive 3D Portfolio</title>
+    <!-- Tailwind CSS for modern responsive UI styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for high-tech cosmic UI icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for futuristic typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Three.js CDN for genuine 3D graphics -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Anime.js CDN for smooth transition curves, UI animations and timelines -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #02020a;
+            overflow: hidden;
+        }
+        .heading-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+        /* Custom scrollbar for deep space panels */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(147, 51, 234, 0.4);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(147, 51, 234, 0.7);
+        }
+        /* Neomorphic futuristic HUD effects */
+        .glass-panel {
+            background: rgba(8, 8, 20, 0.92);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(147, 51, 234, 0.35);
+            box-shadow: 0 0 45px rgba(147, 51, 234, 0.25);
+        }
+        .neon-glow {
+            text-shadow: 0 0 8px rgba(147, 51, 234, 0.8), 0 0 20px rgba(147, 51, 234, 0.3);
+        }
+        .scanline {
+            width: 100%;
+            height: 2px;
+            background: rgba(147, 51, 234, 0.2);
+            position: absolute;
+            animation: scan 4s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes scan {
+            from { top: 0%; }
+            to { top: 100%; }
+        }
+        .glow-text {
+            text-shadow: 0 0 10px rgba(147, 51, 234, 0.8);
+        }
+        /* Floating Planet Label Styles */
+        .planet-label {
+            position: absolute;
+            transform: translate(-50%, -100%);
+            z-index: 15;
+            transition: opacity 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+        }
+    </style>
+</head>
+<body class="text-white relative select-none">
+
+    <!-- Screen Canvas for background 3D Galaxy -->
+    <div id="canvas-container" class="absolute top-0 left-0 w-full h-full z-0 cursor-grab active:cursor-grabbing"></div>
+
+    <!-- Container for dynamic 2D floating labels tracking 3D planet positions -->
+    <div id="labels-container" class="absolute inset-0 pointer-events-none z-10 overflow-hidden">
+        <!-- Labels will be generated here dynamically -->
+    </div>
+
+    <!-- MAIN HUB HUD LAYER -->
+    <div id="hud" class="absolute inset-0 pointer-events-none z-10 flex flex-col justify-between p-6">
+        <a href="https://www.solarsystemscope.com/textures/" target="_blank" rel="noopener noreferrer" class="pointer-events-auto absolute bottom-1 right-3 text-[9px] text-slate-400/70 hover:text-slate-200 transition">
+            Planet textures: Solar System Scope, CC BY 4.0
+        </a>
+        <!-- Top Navigation Status Bar -->
+        <header class="flex justify-between items-start w-full pointer-events-auto">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full border border-purple-500/50 flex items-center justify-center bg-purple-950/40 relative">
+                    <span class="absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-20 animate-ping"></span>
+                    <i class="fa-solid fa-satellite-dish text-purple-400"></i>
+                </div>
+                <div>
+                    <h1 class="heading-font text-lg font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400">SURAJ GALAXY v4.0</h1>
+                    <p class="text-[10px] font-bold tracking-[0.3em] text-blue-400 opacity-80 uppercase">Cognitive Multiplier Protocols Online</p>
+                </div>
+            </div>
+            
+            <!-- Quick Sector Jumps, GitHub profile link & Audio Control -->
+            <div class="flex items-center gap-3">
+                <nav class="hidden lg:flex gap-2">
+                    <button onclick="zoomToSector('mercury')" class="px-3 py-1 text-xs border border-purple-500/30 rounded bg-purple-950/20 hover:bg-purple-500/30 transition-all cursor-pointer">MERCURY: SKILLS</button>
+                    <button onclick="zoomToSector('earth')" class="px-3 py-1 text-xs border border-blue-500/30 rounded bg-blue-950/20 hover:bg-blue-500/30 transition-all cursor-pointer">EARTH: ABOUT ME</button>
+                    <button onclick="zoomToSector('mars')" class="px-3 py-1 text-xs border border-red-500/30 rounded bg-red-950/20 hover:bg-red-500/30 transition-all cursor-pointer">MARS: PROJECTS</button>
+                    <button onclick="zoomToSector('jupiter')" class="px-3 py-1 text-xs border border-yellow-500/30 rounded bg-yellow-950/20 hover:bg-yellow-500/30 transition-all cursor-pointer">JUPITER: EXPERIENCE</button>
+                    <button onclick="zoomToSector('saturn')" class="px-3 py-1 text-xs border border-amber-500/30 rounded bg-amber-950/20 hover:bg-amber-500/30 transition-all cursor-pointer">SATURN: FLAGSHIP SITE</button>
+                </nav>
+                
+                <!-- GitHub Direct Profile Link -->
+                <a href="https://github.com/Suraj02-code" target="_blank" class="px-3 py-1 text-xs border border-purple-500/40 rounded-full bg-purple-950/40 hover:bg-purple-600 text-purple-200 transition-all flex items-center gap-1.5 cursor-pointer shadow-lg shadow-purple-950/50">
+                    <i class="fa-brands fa-github text-sm"></i>
+                    <span class="hidden sm:inline font-bold">@Suraj02-code</span>
+                </a>
+
+                <!-- Audio Toggle Button -->
+                <button onclick="toggleAudioSystem()" id="audio-toggle" class="w-9 h-9 border border-purple-500/30 rounded-full flex items-center justify-center bg-purple-950/30 hover:bg-purple-500/40 text-purple-400 transition-all cursor-pointer">
+                    <i class="fa-solid fa-volume-xmark" id="audio-icon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Right-corner instructions -->
+        <div class="absolute top-24 right-6 flex max-w-xs flex-col items-end text-right opacity-85 transition-opacity duration-500" id="interaction-helper">
+            <div class="inline-block p-3 border border-purple-500/20 bg-purple-500/5 backdrop-blur-sm rounded-full mb-3">
+                <i class="fa-solid fa-arrows-to-dot text-purple-400 animate-bounce"></i>
+            </div>
+            <p class="heading-font text-sm font-bold tracking-widest text-purple-300 uppercase glow-text">Orbital Navigation Active</p>
+            <p class="text-[10px] text-slate-400 mt-2 uppercase tracking-widest font-bold pointer-events-auto">
+                Hold Drag to Rotate // Scroll to Zoom // Click Planet Sector
+            </p>
+        </div>
+
+        <!-- Footer Coordinates / System Telemetry -->
+        <footer class="flex justify-between items-end w-full">
+            <div class="text-xs text-slate-400 font-mono">
+                <div>SECTOR: SURAJ_0x4F91</div>
+                <div>GITHUB: <a href="https://github.com/Suraj02-code" target="_blank" class="text-purple-400 hover:underline">Suraj02-code</a></div>
+            </div>
+            <div class="text-right text-xs text-slate-400 font-mono">
+                <div>LATENCY: 14ms</div>
+                <div>FRAME RATE: <span id="fps-counter">60</span> FPS</div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- PERSISTENT DETAILS MODAL PANEL (SLIDES IN FROM RIGHT) -->
+    <div id="details-panel" class="fixed top-0 right-0 h-full w-full md:w-[480px] glass-panel z-20 translate-x-full transition-all duration-500 flex flex-col p-6 overflow-y-auto pointer-events-auto">
+        <div class="scanline"></div>
+        <!-- Close Button -->
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-purple-500/20">
+            <div class="flex items-center gap-2">
+                <i id="panel-icon" class="fa-solid fa-circle text-purple-400 text-lg"></i>
+                <h2 id="panel-title" class="heading-font text-xl font-bold tracking-wider text-purple-300">SECTOR PREVIEW</h2>
+            </div>
+            <button onclick="resetCameraOverview()" class="px-3 py-1.5 text-xs bg-red-950/40 border border-red-500/30 rounded text-red-300 hover:bg-red-500/30 transition duration-300 cursor-pointer">
+                <i class="fa-solid fa-plane-departure mr-1.5"></i> RETURN TO ORBIT
+            </button>
+        </div>
+
+        <!-- Dynamic Panel Payload Space -->
+        <div id="panel-payload" class="flex-grow space-y-6">
+            <!-- Dynamic Injection occurs here via JavaScript based on selected planet -->
+        </div>
+    </div>
+
+    <!-- PROCEDURAL THREE.JS & ANIMEJS WORKSPACE -->
+    <script>
+        // Setup Three.js Globals
+        let scene, camera, renderer, starField, sunMesh;
+        let solarSystemGroup;
+        const planets = {};
+        const orbitLines = [];
+        let activePlanetKey = null;
+        let originalCameraPos = { x: 0, y: 16, z: 28 };
+        let isTransitioning = false;
+
+        // Comets/Shooting Stars Properties
+        const comets = [];
+        const maxComets = 3;
+
+        // Audio System State
+        let audioContext = null;
+        let ambientSynthNode = null;
+        let isAudioMuted = true;
+
+        // Mouse Drag Control State variables
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        let dragDistance = 0;
+
+        // Color Palettes
+        const colors = {
+            mercury: 0xa1a1aa,
+            earth: 0x3b82f6,
+            mars: 0xef4444,
+            jupiter: 0xeab308,
+            saturn: 0xf59e0b,
+            sun: 0xffaa00
+        };
+
+        // System Configuration explicitly aligning user names to planets
+        const planetConfig = {
+            mercury: { radius: 0.45, distance: 5.5, speed: 0.008, color: colors.mercury, title: 'Mercury', subtitle: 'Technical Core', icon: 'fa-code', label: 'SKILLS', colorClass: 'border-slate-500 text-slate-300 shadow-slate-500/20 bg-slate-950/90' },
+            earth: { radius: 0.8, distance: 8.5, speed: 0.005, color: colors.earth, title: 'Earth', subtitle: 'About Myself', icon: 'fa-user-astronaut', label: 'ABOUT MYSELF', colorClass: 'border-blue-500 text-blue-200 shadow-blue-500/30 bg-blue-950/90' },
+            mars: { radius: 0.6, distance: 11.5, speed: 0.004, color: colors.mars, title: 'Mars', subtitle: 'Projects Portfolio', icon: 'fa-laptop-code', label: 'PROJECTS', colorClass: 'border-red-500 text-red-200 shadow-red-500/30 bg-red-950/90' },
+            jupiter: { radius: 1.4, distance: 15.5, speed: 0.002, color: colors.jupiter, title: 'Jupiter', subtitle: 'Work Experience', icon: 'fa-briefcase', label: 'EXPERIENCE', colorClass: 'border-yellow-500 text-yellow-200 shadow-yellow-500/30 bg-yellow-950/90' },
+            saturn: { radius: 1.1, distance: 20.0, speed: 0.0012, color: colors.saturn, title: 'Saturn', subtitle: 'Flagship Site', icon: 'fa-rocket', hasRings: true, label: 'FLAGSHIP SITE', colorClass: 'border-amber-500 text-amber-200 shadow-amber-500/30 bg-amber-950/90' }
+        };
+
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        // Audio System Generator
+        function initAudioEngine() {
+            if (audioContext) return;
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            const osc = audioContext.createOscillator();
+            const oscFilter = audioContext.createBiquadFilter();
+            const gainNode = audioContext.createGain();
+
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(55, audioContext.currentTime);
+            
+            oscFilter.type = 'lowpass';
+            oscFilter.frequency.setValueAtTime(110, audioContext.currentTime);
+
+            gainNode.gain.setValueAtTime(0.08, audioContext.currentTime);
+
+            osc.connect(oscFilter);
+            oscFilter.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            osc.start();
+            ambientSynthNode = { osc, gain: gainNode };
+        }
+
+        function playSynthBeep(freq, dur) {
+            if (!audioContext || isAudioMuted) return;
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+            gain.gain.setValueAtTime(0.12, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + dur);
+
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            osc.start();
+            osc.stop(audioContext.currentTime + dur);
+        }
+
+        function toggleAudioSystem() {
+            if (!audioContext) {
+                initAudioEngine();
+            }
+            isAudioMuted = !isAudioMuted;
+            
+            const icon = document.getElementById('audio-icon');
+            if (isAudioMuted) {
+                icon.className = "fa-solid fa-volume-xmark";
+                if (ambientSynthNode) ambientSynthNode.gain.gain.setValueAtTime(0, audioContext.currentTime);
+            } else {
+                icon.className = "fa-solid fa-volume-high text-green-400";
+                if (audioContext.state === 'suspended') audioContext.resume();
+                if (ambientSynthNode) ambientSynthNode.gain.gain.setValueAtTime(0.08, audioContext.currentTime);
+                playSynthBeep(660, 0.15);
+            }
+        }
+
+        // Planet maps from Solar System Scope (CC BY 4.0)
+        const planetTextureUrls = {
+            mercury: 'https://raw.githubusercontent.com/GemB1123/gemb-planet-textures/main/mercury.jpg',
+            earth: 'https://raw.githubusercontent.com/GemB1123/gemb-planet-textures/main/earth.jpg',
+            mars: 'https://raw.githubusercontent.com/GemB1123/gemb-planet-textures/main/mars.jpg',
+            jupiter: 'https://raw.githubusercontent.com/GemB1123/gemb-planet-textures/main/jupiter.jpg',
+            saturn: 'https://raw.githubusercontent.com/GemB1123/gemb-planet-textures/main/saturn.jpg'
+        };
+        const sunTextureUrl = 'https://raw.githubusercontent.com/GemB1123/gemb-planet-textures/main/sun.jpg';
+        const planetRoughness = {
+            mercury: 0.85,
+            earth: 0.3,
+            mars: 0.75,
+            jupiter: 0.45,
+            saturn: 0.55
+        };
+        const textureLoader = new THREE.TextureLoader();
+        textureLoader.setCrossOrigin('anonymous');
+
+        function loadPlanetTexture(key, material) {
+            const textureUrl = planetTextureUrls[key];
+            textureLoader.load(
+                textureUrl,
+                (texture) => {
+                    texture.encoding = THREE.sRGBEncoding;
+                    material.map = texture;
+                    material.color.set(0xffffff);
+                    material.needsUpdate = true;
+                },
+                undefined,
+                (error) => {
+                    console.error(`Failed to load ${key} texture from ${textureUrl}`, error);
+                }
+            );
+        }
+
+        // Initialize scene
+        function init() {
+            const container = document.getElementById('canvas-container');
+            const labelsContainer = document.getElementById('labels-container');
+            
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x020208, 0.015);
+
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 45, 170);
+            camera.lookAt(0, 0, 0);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.15;
+            container.appendChild(renderer.domElement);
+
+            solarSystemGroup = new THREE.Group();
+            scene.add(solarSystemGroup);
+
+            const ambientLight = new THREE.AmbientLight(0x181230, 1.8);
+            scene.add(ambientLight);
+
+            const pointLight = new THREE.PointLight(0xfff5ea, 6, 60);
+            pointLight.position.set(0, 0, 0);
+            scene.add(pointLight);
+
+            const sunGeometry = new THREE.SphereGeometry(2.3, 64, 64);
+            const sunTextureCanvas = document.createElement('canvas');
+            sunTextureCanvas.width = 512;
+            sunTextureCanvas.height = 512;
+            const sCtx = sunTextureCanvas.getContext('2d');
+            let grad = sCtx.createRadialGradient(256, 256, 0, 256, 256, 256);
+            grad.addColorStop(0, '#fff2a1');
+            grad.addColorStop(0.45, '#ff9a16');
+            grad.addColorStop(1, '#b51d00');
+            sCtx.fillStyle = grad;
+            sCtx.fillRect(0, 0, 512, 512);
+
+            const sunMaterial = new THREE.MeshBasicMaterial({
+                map: new THREE.CanvasTexture(sunTextureCanvas),
+                color: 0xffffff
+            });
+            sunMesh = new THREE.Mesh(sunGeometry, sunMaterial);
+            solarSystemGroup.add(sunMesh);
+            textureLoader.load(
+                sunTextureUrl,
+                (texture) => {
+                    texture.encoding = THREE.sRGBEncoding;
+                    sunMaterial.map = texture;
+                    sunMaterial.needsUpdate = true;
+                },
+                undefined,
+                (error) => {
+                    console.error(`Failed to load the Sun texture from ${sunTextureUrl}`, error);
+                }
+            );
+
+            // Generate Cosmic Starfield
+            const starGeo = new THREE.BufferGeometry();
+            const starCount = 4000;
+            const starPositions = new Float32Array(starCount * 3);
+            const starColors = new Float32Array(starCount * 3);
+
+            for (let i = 0; i < starCount; i++) {
+                starPositions[i*3] = (Math.random() - 0.5) * 250;
+                starPositions[i*3+1] = (Math.random() - 0.5) * 250;
+                starPositions[i*3+2] = (Math.random() - 0.5) * 250;
+
+                starColors[i*3] = 0.8 + Math.random() * 0.2;
+                starColors[i*3+1] = 0.7 + Math.random() * 0.3;
+                starColors[i*3+2] = 0.9 + Math.random() * 0.1;
+            }
+            starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+            starGeo.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+
+            const starMaterial = new THREE.PointsMaterial({
+                size: 0.15,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.85,
+                sizeAttenuation: true
+            });
+            starField = new THREE.Points(starGeo, starMaterial);
+            scene.add(starField);
+
+            // Build Planets and create interactive Floating Labels
+            Object.keys(planetConfig).forEach((key) => {
+                const conf = planetConfig[key];
+                const orbitGroup = new THREE.Group();
+                solarSystemGroup.add(orbitGroup);
+
+                const geom = new THREE.SphereGeometry(conf.radius, 64, 64);
+                const mat = new THREE.MeshStandardMaterial({
+                    color: conf.color,
+                    roughness: planetRoughness[key]
+                });
+                loadPlanetTexture(key, mat);
+
+                const planetMesh = new THREE.Mesh(geom, mat);
+                planetMesh.name = key;
+                orbitGroup.add(planetMesh);
+
+                if (conf.hasRings) {
+                    const ringGeom = new THREE.RingGeometry(conf.radius * 1.4, conf.radius * 2.5, 128);
+                    ringGeom.rotateX(Math.PI / 2);
+                    const ringMat = new THREE.MeshStandardMaterial({ color: 0x926b20, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
+                    const ringMesh = new THREE.Mesh(ringGeom, ringMat);
+                    orbitGroup.add(ringMesh);
+                }
+
+                // Orbital paths
+                const orbitPoints = [];
+                for (let i = 0; i <= 256; i++) {
+                    const theta = (i / 256) * Math.PI * 2;
+                    orbitPoints.push(new THREE.Vector3(Math.cos(theta) * conf.distance, 0, Math.sin(theta) * conf.distance));
+                }
+                const orbitPathGeo = new THREE.BufferGeometry().setFromPoints(orbitPoints);
+                const orbitPathMat = new THREE.LineBasicMaterial({
+                    color: 0x9333ea,
+                    transparent: true,
+                    opacity: 0.18
+                });
+                const orbitLine = new THREE.Line(orbitPathGeo, orbitPathMat);
+                solarSystemGroup.add(orbitLine);
+                orbitLines.push(orbitLine);
+
+                planets[key] = {
+                    group: orbitGroup,
+                    mesh: planetMesh,
+                    distance: conf.distance,
+                    angle: Math.random() * Math.PI * 2,
+                    speed: conf.speed,
+                    orbitLine: orbitLine,
+                    colorClass: conf.colorClass
+                };
+
+                // Floating label Divs
+                const labelDiv = document.createElement('div');
+                labelDiv.id = `floating-label-${key}`;
+                labelDiv.className = `planet-label pointer-events-auto cursor-pointer border ${conf.colorClass} px-3.5 py-2 rounded-lg shadow-2xl backdrop-blur-md whitespace-nowrap transition-all duration-300 hover:scale-110 flex flex-col justify-center items-center`;
+                labelDiv.innerHTML = `
+                    <span class="text-[9px] heading-font font-extrabold tracking-widest text-slate-400 mb-0.5 uppercase">${conf.title} SECTOR</span>
+                    <span class="text-xs md:text-sm heading-font font-black tracking-wider text-white flex items-center gap-1.5">
+                        <i class="fa-solid ${conf.icon}"></i> ${conf.label}
+                    </span>
+                `;
+                
+                labelDiv.addEventListener('mouseenter', () => highlightOrbit(key, true));
+                labelDiv.addEventListener('mouseleave', () => highlightOrbit(key, false));
+                labelDiv.onclick = () => {
+                    playSynthBeep(440, 0.12);
+                    zoomToSector(key);
+                };
+                labelsContainer.appendChild(labelDiv);
+            });
+
+            for (let i = 0; i < maxComets; i++) {
+                spawnComet();
+            }
+
+            executeHyperdriveIntro();
+
+            window.addEventListener('resize', onWindowResize);
+            window.addEventListener('pointerdown', onPointerDown);
+            window.addEventListener('pointermove', onPointerMove);
+            window.addEventListener('pointerup', onPointerUp);
+        }
+
+        function highlightOrbit(key, activate) {
+            if (activePlanetKey) return;
+            const planet = planets[key];
+            if (!planet) return;
+            
+            const targetOpacity = activate ? 1.0 : 0.18;
+            const targetColor = activate ? planetConfig[key].color : 0x9333ea;
+            
+            anime({
+                targets: planet.orbitLine.material,
+                opacity: targetOpacity,
+                duration: 350,
+                easing: 'easeOutQuad'
+            });
+
+            const fromColor = planet.orbitLine.material.color.clone();
+            const toColor = new THREE.Color(targetColor);
+            anime({
+                targets: { t: 0 },
+                t: 1,
+                duration: 350,
+                easing: 'easeOutQuad',
+                update: (anim) => {
+                    const progress = anim.animations[0].currentValue;
+                    planet.orbitLine.material.color.copy(fromColor).lerp(toColor, progress);
+                }
+            });
+
+            const labelEl = document.getElementById(`floating-label-${key}`);
+            if (labelEl) {
+                if (activate) {
+                    labelEl.classList.add('scale-110');
+                    playSynthBeep(880, 0.04);
+                } else {
+                    labelEl.classList.remove('scale-110');
+                }
+            }
+        }
+
+        function spawnComet() {
+            const geometry = new THREE.SphereGeometry(0.12, 8, 8);
+            const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            const cometMesh = new THREE.Mesh(geometry, material);
+            
+            cometMesh.position.set(
+                (Math.random() - 0.5) * 150,
+                (Math.random() - 0.5) * 40,
+                (Math.random() - 0.5) * 150
+            );
+
+            scene.add(cometMesh);
+            comets.push({
+                mesh: cometMesh,
+                velocity: new THREE.Vector3((Math.random() - 0.5) * 0.8, (Math.random() - 0.5) * 0.2, (Math.random() - 0.5) * 0.8),
+                life: Math.random() * 200 + 100
+            });
+        }
+
+        function executeHyperdriveIntro() {
+            anime({
+                targets: camera.position,
+                x: originalCameraPos.x,
+                y: originalCameraPos.y,
+                z: originalCameraPos.z,
+                duration: 2500,
+                easing: 'easeOutExpo',
+                update: () => {
+                    camera.lookAt(0,0,0);
+                }
+            });
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function onPointerDown(event) {
+            if (event.clientX > window.innerWidth - 480 && activePlanetKey) return;
+            if (event.target.closest('.planet-label')) return;
+            if (event.clientY < 80) return;
+
+            isDragging = true;
+            dragDistance = 0;
+            previousMousePosition = {
+                x: event.clientX,
+                y: event.clientY
+            };
+        }
+
+        function onPointerMove(event) {
+            if (!isDragging) return;
+
+            const deltaMove = {
+                x: event.clientX - previousMousePosition.x,
+                y: event.clientY - previousMousePosition.y
+            };
+
+            dragDistance += Math.sqrt(deltaMove.x * deltaMove.x + deltaMove.y * deltaMove.y);
+
+            if (!activePlanetKey) {
+                solarSystemGroup.rotation.y += deltaMove.x * 0.0035;
+                solarSystemGroup.rotation.x += deltaMove.y * 0.0025;
+                solarSystemGroup.rotation.x = Math.max(-Math.PI / 4, Math.min(Math.PI / 4, solarSystemGroup.rotation.x));
+            }
+
+            previousMousePosition = {
+                x: event.clientX,
+                y: event.clientY
+            };
+        }
+
+        function onPointerUp(event) {
+            isDragging = false;
+
+            if (dragDistance < 6 && !event.target.closest('.planet-label')) {
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+                raycaster.setFromCamera(mouse, camera);
+                const meshes = Object.values(planets).map(p => p.mesh);
+                const intersects = raycaster.intersectObjects(meshes);
+
+                if (intersects.length > 0) {
+                    const clickedPlanetKey = intersects[0].object.name;
+                    zoomToSector(clickedPlanetKey);
+                }
+            }
+        }
+
+        function zoomToSector(key) {
+            if (isTransitioning) return;
+            isTransitioning = true;
+            activePlanetKey = key;
+
+            const planet = planets[key];
+            const conf = planetConfig[key];
+
+            const worldPos = new THREE.Vector3();
+            planet.mesh.getWorldPosition(worldPos);
+
+            const targetCamPos = {
+                x: worldPos.x + (conf.radius * 3.3),
+                y: worldPos.y + (conf.radius * 1.2),
+                z: worldPos.z + (conf.radius * 3.3)
+            };
+
+            document.getElementById('interaction-helper').classList.add('opacity-0');
+
+            Object.keys(planets).forEach(k => {
+                const p = planets[k];
+                const isSelected = (k === key);
+                const targetOpacity = isSelected ? 1.0 : 0.03;
+                const targetColor = isSelected ? planetConfig[k].color : 0x4a148c;
+
+                anime({
+                    targets: p.orbitLine.material,
+                    opacity: targetOpacity,
+                    duration: 1000,
+                    easing: 'easeOutQuint'
+                });
+
+                const fromColor = p.orbitLine.material.color.clone();
+                const toColor = new THREE.Color(targetColor);
+                anime({
+                    targets: { t: 0 },
+                    t: 1,
+                    duration: 1000,
+                    easing: 'easeOutQuint',
+                    update: (anim) => {
+                        const progress = anim.animations[0].currentValue;
+                        p.orbitLine.material.color.copy(fromColor).lerp(toColor, progress);
+                    }
+                });
+            });
+
+            const tl = anime.timeline({
+                easing: 'easeOutQuint',
+                complete: () => { isTransitioning = false; }
+            });
+
+            tl.add({
+                targets: camera.position,
+                x: targetCamPos.x,
+                y: targetCamPos.y,
+                z: targetCamPos.z,
+                duration: 2000,
+                update: () => {
+                    camera.lookAt(worldPos);
+                }
+            });
+
+            renderPanelContent(key);
+            
+            anime({
+                targets: '#details-panel',
+                translateX: ['100%', '0%'],
+                duration: 800,
+                easing: 'easeOutQuint'
+            });
+        }
+
+        function resetCameraOverview() {
+            if (isTransitioning) return;
+            isTransitioning = true;
+            activePlanetKey = null;
+
+            playSynthBeep(330, 0.1);
+
+            Object.keys(planets).forEach(k => {
+                const p = planets[k];
+                anime({
+                    targets: p.orbitLine.material,
+                    opacity: 0.18,
+                    duration: 800,
+                    easing: 'easeInOutExpo'
+                });
+
+                const fromColor = p.orbitLine.material.color.clone();
+                const toColor = new THREE.Color(0x9333ea);
+                anime({
+                    targets: { t: 0 },
+                    t: 1,
+                    duration: 800,
+                    easing: 'easeInOutExpo',
+                    update: (anim) => {
+                        const progress = anim.animations[0].currentValue;
+                        p.orbitLine.material.color.copy(fromColor).lerp(toColor, progress);
+                    }
+                });
+            });
+
+            anime({
+                targets: '#details-panel',
+                translateX: '100%',
+                duration: 600,
+                easing: 'easeInQuint',
+                complete: () => {
+                    document.getElementById('interaction-helper').classList.remove('opacity-0');
+                }
+            });
+
+            anime({
+                targets: camera.position,
+                x: originalCameraPos.x,
+                y: originalCameraPos.y,
+                z: originalCameraPos.z,
+                duration: 1800,
+                easing: 'easeInOutExpo',
+                update: () => {
+                    camera.lookAt(0, 0, 0);
+                },
+                complete: () => { isTransitioning = false; }
+            });
+        }
+
+        function filterProjectSelector(category) {
+            playSynthBeep(700, 0.05);
+            
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-purple-600', 'text-white', 'border-purple-400');
+                btn.classList.add('bg-purple-950/20', 'text-purple-300');
+            });
+            event.currentTarget.classList.add('bg-purple-600', 'text-white', 'border-purple-400');
+
+            anime({
+                targets: '.project-card',
+                opacity: [1, 0],
+                scale: [1, 0.95],
+                duration: 250,
+                easing: 'easeInOutQuad',
+                complete: () => {
+                    document.querySelectorAll('.project-card').forEach(card => {
+                        if (category === 'all' || card.dataset.category === category) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+
+                    anime({
+                        targets: '.project-card',
+                        opacity: [0, 1],
+                        scale: [0.95, 1],
+                        delay: anime.stagger(60),
+                        duration: 350,
+                        easing: 'easeOutQuad'
+                    });
+                }
+            });
+        }
+
+        // PANEL INJECTION LOGIC
+        function renderPanelContent(key) {
+            const conf = planetConfig[key];
+            const titleEl = document.getElementById('panel-title');
+            const iconEl = document.getElementById('panel-icon');
+            const payload = document.getElementById('panel-payload');
+
+            titleEl.textContent = `${conf.title.toUpperCase()} : ${conf.subtitle.toUpperCase()}`;
+            iconEl.className = `fa-solid ${conf.icon} text-purple-400 text-lg`;
+
+            let html = '';
+
+                                    if (key === 'mercury') {
+                html = `
+                    <div class="space-y-4">
+                        <!-- Header Terminal Banner -->
+                        <div class="p-3 bg-purple-950/40 rounded-lg border border-purple-500/30 flex justify-between items-center shadow-lg">
+                            <div>
+                                <h3 class="heading-font text-xs font-black tracking-widest text-purple-300">TECHNICAL SKILLS</h3>
+                                <p class="text-[10px] text-slate-400 font-mono">SYSTEM & COGNITIVE MATRIX</p>
+                            </div>
+                            <i class="fa-solid fa-microchip text-purple-400 text-xl animate-pulse"></i>
+                        </div>
+
+                        <div class="space-y-3">
+                            <!-- AI / AI AGENTS & LLM MODELS (PRIMARY FORCE MULTIPLIER) -->
+                            <div class="p-3.5 bg-gradient-to-r from-cyan-950/60 to-slate-900/80 rounded-lg border-l-4 border-cyan-400 border border-slate-800 space-y-2 hover:border-cyan-300 transition shadow-lg shadow-cyan-950/20">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="text-xs font-bold text-cyan-300 uppercase heading-font tracking-wider flex items-center gap-2">
+                                        <i class="fa-solid fa-brain text-[11px] text-cyan-400 animate-pulse"></i> AI Agents & LLM Orchestration
+                                    </h4>
+                                    <span class="text-[9px] bg-cyan-500/20 text-cyan-300 font-mono font-extrabold px-1.5 py-0.5 rounded border border-cyan-500/40">COGNITIVE MULTIPLIER</span>
+                                </div>
+                                <p class="text-[11px] text-slate-300 font-sans leading-relaxed">
+                                    Leveraging cutting-edge LLMs, AI autonomous agents, and prompt engineering architectures as cognitive force multipliers to accelerate prototyping, automate complex logic, and direct rapid full-stack engineering workflows.
+                                </p>
+                                <div class="flex flex-wrap gap-1.5 pt-1">
+                                    <span class="text-[10px] px-2 py-0.5 bg-cyan-950/80 border border-cyan-500/40 text-cyan-200 rounded font-mono font-bold">LLM Architectures</span>
+                                    <span class="text-[10px] px-2 py-0.5 bg-cyan-950/80 border border-cyan-500/40 text-cyan-200 rounded font-mono font-bold">AI Autonomous Agents</span>
+                                    <span class="text-[10px] px-2 py-0.5 bg-cyan-950/80 border border-cyan-500/40 text-cyan-200 rounded font-mono font-bold">Vibe Coding Workflows</span>
+                                    <span class="text-[10px] px-2 py-0.5 bg-cyan-950/80 border border-cyan-500/40 text-cyan-200 rounded font-mono font-bold">Prompt Engineering</span>
+                                </div>
+                            </div>
+
+                            <!-- Frontend Development -->
+                            <div class="p-3.5 bg-slate-900/80 rounded-lg border-l-4 border-purple-500 border border-slate-800 space-y-1 hover:border-purple-400 transition">
+                                <h4 class="text-xs font-bold text-purple-300 uppercase heading-font tracking-wider flex items-center gap-2">
+                                    <i class="fa-solid fa-code text-[11px] text-purple-400"></i> Frontend Development
+                                </h4>
+                                <div class="flex flex-wrap gap-1.5 pt-1">
+                                    <span class="text-[11px] px-2 py-0.5 bg-purple-950/50 border border-purple-500/30 text-purple-200 rounded font-mono">HTML</span>
+                                    <span class="text-[11px] px-2 py-0.5 bg-purple-950/50 border border-purple-500/30 text-purple-200 rounded font-mono">CSS</span>
+                                    <span class="text-[11px] px-2 py-0.5 bg-purple-950/50 border border-purple-500/30 text-purple-200 rounded font-mono">JavaScript</span>
+                                </div>
+                            </div>
+
+                            <!-- Database Management -->
+                            <div class="p-3.5 bg-slate-900/80 rounded-lg border-l-4 border-blue-500 border border-slate-800 space-y-1 hover:border-blue-400 transition">
+                                <h4 class="text-xs font-bold text-blue-300 uppercase heading-font tracking-wider flex items-center gap-2">
+                                    <i class="fa-solid fa-database text-[11px] text-blue-400"></i> Database Management
+                                </h4>
+                                <div class="flex flex-wrap gap-1.5 pt-1">
+                                    <span class="text-[11px] px-2 py-0.5 bg-blue-950/50 border border-blue-500/30 text-blue-200 rounded font-mono">SQL</span>
+                                </div>
+                            </div>
+
+                            <!-- Data Analysis & Visualization -->
+                            <div class="p-3.5 bg-slate-900/80 rounded-lg border-l-4 border-emerald-500 border border-slate-800 space-y-1 hover:border-emerald-400 transition">
+                                <h4 class="text-xs font-bold text-emerald-300 uppercase heading-font tracking-wider flex items-center gap-2">
+                                    <i class="fa-solid fa-chart-pie text-[11px] text-emerald-400"></i> Data Analysis & Visualization
+                                </h4>
+                                <div class="flex flex-wrap gap-1.5 pt-1">
+                                    <span class="text-[11px] px-2 py-0.5 bg-emerald-950/50 border border-emerald-500/30 text-emerald-200 rounded font-mono">Python</span>
+                                    <span class="text-[11px] px-2 py-0.5 bg-emerald-950/50 border border-emerald-500/30 text-emerald-200 rounded font-mono">Power BI</span>
+                                    <span class="text-[11px] px-2 py-0.5 bg-emerald-950/50 border border-emerald-500/30 text-emerald-200 rounded font-mono">Excel</span>
+                                </div>
+                            </div>
+
+                            <!-- General Tools -->
+                            <div class="p-3.5 bg-slate-900/80 rounded-lg border-l-4 border-amber-500 border border-slate-800 space-y-1 hover:border-amber-400 transition">
+                                <h4 class="text-xs font-bold text-amber-300 uppercase heading-font tracking-wider flex items-center gap-2">
+                                    <i class="fa-solid fa-screwdriver-wrench text-[11px] text-amber-400"></i> General Tools
+                                </h4>
+                                <div class="flex flex-wrap gap-1.5 pt-1">
+                                    <span class="text-[11px] px-2 py-0.5 bg-amber-950/50 border border-amber-500/30 text-amber-200 rounded font-mono">Jupyter Notebook</span>
+                                    <span class="text-[11px] px-2 py-0.5 bg-amber-950/50 border border-amber-500/30 text-amber-200 rounded font-mono">phpMyAdmin</span>
+                                    <span class="text-[11px] px-2 py-0.5 bg-amber-950/50 border border-amber-500/30 text-amber-200 rounded font-mono">Google Sheets</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-2">
+                            <a href="https://github.com/Suraj02-code" target="_blank" class="w-full py-2 bg-purple-950/40 border border-purple-500/40 rounded text-xs font-bold text-purple-300 flex items-center justify-center gap-2 hover:bg-purple-600 hover:text-white transition-all">
+                                <i class="fa-brands fa-github"></i> VIEW ALL REPOSITORIES (@Suraj02-code)
+                            </a>
+                        </div>
+                    </div>
+                `;
+            } else if (key === 'earth') {
+                html = `
+                    <div class="space-y-4 animate-fadeIn">
+                        <div class="relative w-full h-40 bg-slate-950 rounded border border-blue-500/30 overflow-hidden flex items-center justify-center">
+                            <i class="fa-solid fa-user-astronaut text-6xl text-blue-500/30 animate-pulse"></i>
+                            <div class="absolute inset-0 flex flex-col justify-end p-3 bg-gradient-to-t from-slate-950 to-transparent">
+                                <h3 class="heading-font text-sm font-black tracking-widest text-blue-400 flex items-center gap-1.5">
+                                    COMMANDER DOSSIER: SURAJ <span class="animate-pulse">⚡</span>
+                                </h3>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3.5 text-sm text-slate-300 leading-relaxed font-medium">
+                            <p class="text-blue-300 font-semibold text-base italic">
+                                Yo, welcome to my corner of the universe.
+                            </p>
+                            <p>
+                                I'm Suraj, part code, part chaos, 100% curious. I turn caffeine-fueled ideas into working products, messy data into meaningful insights, and random <em>“what if?”</em> thoughts into things that actually exist.
+                            </p>
+                            <p>
+                                From decoding datasets with Python and SQL to building data-driven solutions, I'm here to experiment, build, debug, repeat, and occasionally question why the code worked before I touched it.
+                            </p>
+                            
+                            <div class="p-3.5 bg-blue-950/40 rounded border border-blue-500/20 space-y-2 mt-4">
+                                <h4 class="heading-font text-xs font-bold text-blue-400 tracking-wider flex items-center gap-1.5">
+                                    THE AI-POWERED MULTIPLIER ⚡ (AI & AI AGENTS / VIBE CODING)
+                                </h4>
+                                <p class="text-xs text-slate-300">
+                                    I don't just write code line-by-line; I direct it. I’m a practitioner of <strong>Vibe Coding</strong>—using <strong>AI and AI Agents</strong> as cognitive accelerators to build complex prototypes in hours rather than weeks. By orchestrating LLMs and automation workflows, I skip the boilerplate and spend my energy where it actually matters: architecture, performance, user experience, and solving the real problem.
+                                </p>
+                            </div>
+
+                            <a href="https://github.com/Suraj02-code" target="_blank" class="mt-4 block w-full text-center py-2 bg-blue-600 hover:bg-blue-500 text-white rounded font-bold text-xs transition flex items-center justify-center gap-2">
+                                <i class="fa-brands fa-github"></i> Visit GitHub Profile (@Suraj02-code)
+                            </a>
+                            
+                            <div class="border-t border-blue-500/20 pt-3 mt-4">
+                                <p class="heading-font text-xs text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 font-bold tracking-wider">
+                                    No boring stuff. Just big ideas, clever solutions, data-driven decisions, and a galaxy of things I'm creating. 🚀
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (key === 'mars') {
+                html = `
+                    <div class="space-y-4">
+                        <div class="flex gap-1.5 pb-2 overflow-x-auto">
+                            <button onclick="filterProjectSelector('all')" class="filter-btn px-2.5 py-1 text-[11px] heading-font rounded border border-purple-500/30 bg-purple-600 text-white font-bold transition">ALL</button>
+                            <button onclick="filterProjectSelector('apps')" class="filter-btn px-2.5 py-1 text-[11px] heading-font rounded border border-purple-500/20 bg-purple-950/20 text-purple-300 transition">APPS</button>
+                            <button onclick="filterProjectSelector('dashboards')" class="filter-btn px-2.5 py-1 text-[11px] heading-font rounded border border-purple-500/20 bg-purple-950/20 text-purple-300 transition">DASHBOARDS</button>
+                        </div>
+
+                        <div class="space-y-3 max-h-[420px] overflow-y-auto pr-1" id="project-list-container">
+                            <!-- Blossom and Beyond Florals -->
+                            <div class="project-card p-4 rounded bg-purple-950/30 border-2 border-purple-500/60 shadow-lg" data-category="apps">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-[10px] bg-purple-500 text-white font-bold px-2 py-0.5 rounded-full animate-pulse">LIVE & CRITICAL</span>
+                                </div>
+                                <h4 class="text-sm font-bold text-purple-200">Blossom and Beyond Florals</h4>
+                                <p class="text-xs text-slate-400 mt-1 mb-3">Professional live e-commerce floral utility system built with fluid graphics and optimized layouts.</p>
+                                <div class="flex gap-2">
+                                    <a href="https://blossomandbeyondflorals.com" target="_blank" class="text-xs bg-purple-500 hover:bg-purple-600 text-white font-bold py-1 px-3 rounded inline-flex items-center gap-1.5 transition-all">
+                                        Launch Project <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                    </a>
+                                    <a href="https://github.com/Suraj02-code" target="_blank" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-1 px-3 rounded inline-flex items-center gap-1.5 transition-all">
+                                        <i class="fa-brands fa-github text-[11px]"></i> GitHub
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Billing System -->
+                            <div class="project-card p-4 rounded bg-slate-900/50 border border-slate-800 hover:border-red-500/40 transition" data-category="apps">
+                                <h4 class="text-sm font-bold text-red-400">1. Billing System</h4>
+                                <p class="text-xs text-slate-400 mt-1 mb-2">Intuitive software engine running highly concurrent transaction records and robust invoices.</p>
+                                <a href="https://github.com/Suraj02-code/Billing-System" target="_blank" class="text-xs text-red-300 hover:text-white font-bold inline-flex items-center gap-1">
+                                    <i class="fa-brands fa-github"></i> View Repository
+                                </a>
+                            </div>
+
+                            <!-- My House Help -->
+                            <div class="project-card p-4 rounded bg-slate-900/50 border border-slate-800 hover:border-red-500/40 transition" data-category="apps">
+                                <h4 class="text-sm font-bold text-red-400">2. My House Help</h4>
+                                <p class="text-xs text-slate-400 mt-1 mb-2">Domestic assistant service workflow automation platform matching users with trusted workers.</p>
+                                <a href="https://github.com/Suraj02-code/My-House-Help" target="_blank" class="text-xs text-red-300 hover:text-white font-bold inline-flex items-center gap-1">
+                                    <i class="fa-brands fa-github"></i> View Repository
+                                </a>
+                            </div>
+
+                            <!-- Diabetes Analysis Dashboard -->
+                            <div class="project-card p-4 rounded bg-slate-900/50 border border-slate-800 hover:border-red-500/40 transition" data-category="dashboards">
+                                <h4 class="text-sm font-bold text-red-400">3. Diabetes Analysis Dashboard</h4>
+                                <p class="text-xs text-slate-400 mt-1 mb-2">Clinical prediction model evaluating risk ratios across patient diagnostic attributes.</p>
+                                <a href="https://github.com/Suraj02-code/Diabetes-Analysis" target="_blank" class="text-xs text-red-300 hover:text-white font-bold inline-flex items-center gap-1">
+                                    <i class="fa-brands fa-github"></i> View Repository
+                                </a>
+                            </div>
+
+                            <!-- Loan Approval Analysis Dashboard -->
+                            <div class="project-card p-4 rounded bg-slate-900/50 border border-slate-800 hover:border-red-500/40 transition" data-category="dashboards">
+                                <h4 class="text-sm font-bold text-red-400">4. Loan Approval Dashboard</h4>
+                                <p class="text-xs text-slate-400 mt-1 mb-2">Visual database tracking processing times, default indices, and verification metrics.</p>
+                                <a href="https://github.com/Suraj02-code/Loan-Approval-Analysis" target="_blank" class="text-xs text-red-300 hover:text-white font-bold inline-flex items-center gap-1">
+                                    <i class="fa-brands fa-github"></i> View Repository
+                                </a>
+                            </div>
+
+                            <!-- Shark tank Analysis -->
+                            <div class="project-card p-4 rounded bg-slate-900/50 border border-slate-800 hover:border-red-500/40 transition" data-category="dashboards">
+                                <h4 class="text-sm font-bold text-red-400">5. Shark Tank Dashboard</h4>
+                                <p class="text-xs text-slate-400 mt-1 mb-2">Interactive platform dissecting deal parameters, industries, and valuations.</p>
+                                <a href="https://github.com/Suraj02-code/Shark-Tank-Analysis" target="_blank" class="text-xs text-red-300 hover:text-white font-bold inline-flex items-center gap-1">
+                                    <i class="fa-brands fa-github"></i> View Repository
+                                </a>
+                            </div>
+
+                            <!-- UPI Trend Dashboard -->
+                            <div class="project-card p-4 rounded bg-slate-900/50 border border-slate-800 hover:border-red-500/40 transition" data-category="dashboards">
+                                <h4 class="text-sm font-bold text-red-400">6. UPI Trend Analysis Dashboard</h4>
+                                <p class="text-xs text-slate-400 mt-1 mb-2">High-volume transaction visualizer monitoring UPI velocity rates and failure metrics.</p>
+                                <a href="https://github.com/Suraj02-code/UPI-Trend-Analysis" target="_blank" class="text-xs text-red-300 hover:text-white font-bold inline-flex items-center gap-1">
+                                    <i class="fa-brands fa-github"></i> View Repository
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (key === 'jupiter') {
+                html = `
+                    <div class="space-y-4">
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Chronological history record of leadership, technical design, and corporate IT operations deployments.
+                        </p>
+
+                        <div class="space-y-4 pl-4 border-l border-yellow-500/30 relative">
+                            <div class="relative bg-yellow-950/20 p-4 rounded border border-yellow-500/30">
+                                <div class="absolute -left-[27px] top-5 w-3.5 h-3.5 rounded-full bg-yellow-500 border-2 border-slate-950"></div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs font-mono text-yellow-400 font-bold">CURRENT ACTIVATION</span>
+                                    <span class="text-[9px] bg-yellow-500 text-black px-1.5 py-0.5 rounded font-black">AMAZON RAD</span>
+                                </div>
+                                <h4 class="text-sm font-bold text-white mt-1">IT OPERATIONS ASSOCIATE</h4>
+                                <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                                    Directing IT operations and architecture diagnostics, systems deployments, and automation pipelines at Amazon RAD.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (key === 'saturn') {
+                html = `
+                    <div class="space-y-4">
+                        <!-- Flagship Header Terminal -->
+                        <div class="p-4 bg-amber-950/30 border border-amber-500/40 rounded-lg shadow-xl relative overflow-hidden">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-[10px] font-mono bg-amber-500 text-black font-black px-2 py-0.5 rounded tracking-widest uppercase">FLAGSHIP ENTERPRISE DEPLOYMENT</span>
+                                <span class="flex items-center gap-1.5 text-[10px] text-green-400 font-mono font-bold">
+                                    <span class="w-2 h-2 rounded-full bg-green-400 animate-ping"></span> ONLINE [200 OK]
+                                </span>
+                            </div>
+                            <h3 class="heading-font text-base font-black text-amber-200">Blossom and Beyond Florals</h3>
+                            <p class="text-xs text-amber-100/70 font-mono mt-0.5 mb-2">https://blossomandbeyondflorals.com</p>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                A modern floral destination for life's special moments. From handcrafted bouquets and premium blooms to wedding florals, garlands, and custom arrangements, we bring every celebration to life with flowers that speak from the heart.
+                            </p>
+                        </div>
+
+                        <!-- 01 // LIVE PRODUCTION TELEMETRY -->
+                        <div class="p-3.5 bg-slate-900/80 rounded-lg border border-slate-800 space-y-2">
+                            <div class="text-xs font-bold text-amber-400 heading-font tracking-wider flex justify-between items-center border-b border-slate-800 pb-1.5">
+                                <span>01 // LIVE PRODUCTION TELEMETRY</span>
+                                <i class="fa-solid fa-server text-xs"></i>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+                                <div class="bg-slate-950 p-2 rounded border border-slate-800">
+                                    <span class="text-[10px] text-slate-400 block uppercase">CDN LATENCY</span>
+                                    <span class="text-amber-300 font-bold">18 ms</span>
+                                </div>
+                                <div class="bg-slate-950 p-2 rounded border border-slate-800">
+                                    <span class="text-[10px] text-slate-400 block uppercase">UPTIME RATE</span>
+                                    <span class="text-green-400 font-bold">99.98%</span>
+                                </div>
+                                <div class="bg-slate-950 p-2 rounded border border-slate-800">
+                                    <span class="text-[10px] text-slate-400 block uppercase">API RESPONSE</span>
+                                    <span class="text-blue-300 font-bold">42 ms</span>
+                                </div>
+                                <div class="bg-slate-950 p-2 rounded border border-slate-800">
+                                    <span class="text-[10px] text-slate-400 block uppercase">DATABASE</span>
+                                    <span class="text-green-400 font-bold">CONNECTED</span>
+                                </div>
+                                <div class="bg-slate-950 p-2 rounded border border-slate-800">
+                                    <span class="text-[10px] text-slate-400 block uppercase">SSL SECURITY</span>
+                                    <span class="text-purple-300 font-bold">TLS 1.3</span>
+                                </div>
+                                <div class="bg-slate-950 p-2 rounded border border-slate-800">
+                                    <span class="text-[10px] text-slate-400 block uppercase">ERROR RATE</span>
+                                    <span class="text-emerald-400 font-bold">0.02%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 02 // SYSTEM STATUS -->
+                        <div class="p-3.5 bg-slate-900/80 rounded-lg border border-slate-800 space-y-2">
+                            <div class="text-xs font-bold text-amber-400 heading-font tracking-wider flex justify-between items-center border-b border-slate-800 pb-1.5">
+                                <span>02 // SYSTEM STATUS</span>
+                                <i class="fa-solid fa-microchip text-xs"></i>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+                                <div class="bg-slate-950 p-2 rounded border border-slate-800 flex justify-between items-center">
+                                    <span class="text-[10px] text-slate-400 uppercase">BACKEND</span>
+                                    <span class="text-green-400 font-bold text-[10px]">OPERATIONAL</span>
+                                </div>
+                                <div class="bg-slate-950 p-2 rounded border border-slate-800 flex justify-between items-center">
+                                    <span class="text-[10px] text-slate-400 uppercase">DATABASE</span>
+                                    <span class="text-green-400 font-bold text-[10px]">CONNECTED</span>
+                                </div>
+                                <div class="bg-slate-950 p-2 rounded border border-slate-800 flex justify-between items-center">
+                                    <span class="text-[10px] text-slate-400 uppercase">IMAGE DELIVERY</span>
+                                    <span class="text-green-400 font-bold text-[10px]">OPERATIONAL</span>
+                                </div>
+                                <div class="bg-slate-950 p-2 rounded border border-slate-800 flex justify-between items-center">
+                                    <span class="text-[10px] text-slate-400 uppercase">PAYMENT GATEWAY</span>
+                                    <span class="text-green-400 font-bold text-[10px]">OPERATIONAL</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ARCHITECTURE STACK (PERN) -->
+                        <div class="p-3 bg-slate-900/80 rounded-lg border border-slate-800">
+                            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">ARCHITECTURE STACK (PERN)</div>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="text-[10px] px-2 py-0.5 bg-amber-950/60 border border-amber-500/30 text-amber-300 rounded font-mono font-bold">PostgreSQL</span>
+                                <span class="text-[10px] px-2 py-0.5 bg-amber-950/60 border border-amber-500/30 text-amber-300 rounded font-mono font-bold">Express.js</span>
+                                <span class="text-[10px] px-2 py-0.5 bg-amber-950/60 border border-amber-500/30 text-amber-300 rounded font-mono font-bold">React.js</span>
+                                <span class="text-[10px] px-2 py-0.5 bg-amber-950/60 border border-amber-500/30 text-amber-300 rounded font-mono font-bold">Node.js</span>
+                            </div>
+                        </div>
+
+                        <!-- Big Interactive Launch CTA Button -->
+                        <div class="pt-1">
+                            <a href="https://blossomandbeyondflorals.com" target="_blank" class="w-full py-3.5 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-black rounded-lg text-xs heading-font tracking-widest transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-amber-500/25 cursor-pointer uppercase">
+                                <i class="fa-solid fa-rocket text-sm"></i> Launch Production Website <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-0.5"></i>
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }
+
+            payload.innerHTML = html;
+        }
+
+        // Frame Rendering and Physics Simulation Loops
+        let lastTime = 0;
+        let frameCount = 0;
+        let fpsTimer = 0;
+
+        const tempV3 = new THREE.Vector3();
+
+        function animate(time) {
+            requestAnimationFrame(animate);
+
+            frameCount++;
+            if (time - fpsTimer >= 1000) {
+                document.getElementById('fps-counter').textContent = frameCount;
+                frameCount = 0;
+                fpsTimer = time;
+            }
+
+            const delta = time - lastTime;
+            lastTime = time;
+
+            if (starField) {
+                starField.rotation.y += 0.00003;
+            }
+            if (sunMesh) {
+                sunMesh.rotation.y += 0.001;
+            }
+
+            // Animate Comets
+            comets.forEach((comet, index) => {
+                comet.mesh.position.add(comet.velocity);
+                comet.life -= 1;
+                if (comet.life <= 0) {
+                    scene.remove(comet.mesh);
+                    comets.splice(index, 1);
+                    spawnComet();
+                }
+            });
+
+            // Animate each planet continuously along their respective orbital paths
+            Object.keys(planets).forEach(key => {
+                const planet = planets[key];
+                planet.mesh.rotation.y += 0.0025;
+
+                if (activePlanetKey !== key) {
+                    planet.angle += planet.speed * 0.35;
+                }
+
+                const targetX = Math.cos(planet.angle) * planet.distance;
+                const targetZ = Math.sin(planet.angle) * planet.distance;
+
+                planet.group.position.set(targetX, 0, targetZ);
+
+                // PROJECT 3D PLANET COORDINATES TO HTML FLOATING LABELS
+                planet.mesh.getWorldPosition(tempV3);
+                tempV3.project(camera);
+
+                const labelEl = document.getElementById(`floating-label-${key}`);
+                if (labelEl) {
+                    const isBehindCamera = tempV3.z > 1;
+                    if (isBehindCamera || activePlanetKey) {
+                        labelEl.style.opacity = '0';
+                        labelEl.style.pointerEvents = 'none';
+                    } else {
+                        const screenX = (tempV3.x * 0.5 + 0.5) * window.innerWidth;
+                        const screenY = (tempV3.y * -0.5 + 0.5) * window.innerHeight;
+                        
+                        labelEl.style.opacity = '1';
+                        labelEl.style.pointerEvents = 'auto';
+                        labelEl.style.left = `${screenX}px`;
+                        labelEl.style.top = `${screenY - 35}px`;
+                    }
+                }
+            });
+
+            if (activePlanetKey && !isTransitioning) {
+                const focusedPlanet = planets[activePlanetKey];
+                const worldPos = new THREE.Vector3();
+                focusedPlanet.mesh.getWorldPosition(worldPos);
+                camera.lookAt(worldPos);
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        init();
+        requestAnimationFrame(animate);
+    </script>
+</body>
+</html>
+```
